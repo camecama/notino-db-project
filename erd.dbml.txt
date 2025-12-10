@@ -1,0 +1,154 @@
+Table Users {
+  id int [pk, increment]
+  username varchar(100)
+  email varchar(255)
+  wallet_balance decimal
+  created_at datetime
+}
+
+Table Suppliers {
+  id int [pk, increment]
+  name varchar(255)
+  contact_email varchar(255)
+  phone varchar(50)
+  created_at datetime
+}
+
+Table Brands {
+  id int [pk, increment]
+  name varchar(255)
+  website varchar(1000)
+  description text
+  created_at datetime
+}
+
+Table ProductCategories {
+  id int [pk, increment]
+  name varchar(200)
+  description text
+  parent_id int
+  created_at datetime
+}
+
+Table Products {
+  id int [pk, increment]
+  brand_id int
+  supplier_id int
+  title nvarchar(300)
+  description text
+  category_id int
+  default_image_url varchar
+  product_type varchar
+  created_at datetime
+  updated_at datetime
+}
+
+Table ProductSKUs {
+  id int [pk, increment]
+  product_id int
+  sku varchar(100)
+  barcode varchar(100)
+  size varchar(100)
+  color varchar(100)
+  price decimal
+  msrp decimal
+  available boolean
+  created_at datetime
+}
+
+Table Warehouses {
+  id int [pk, increment]
+  name varchar(255)
+  location text
+  phone varchar(50)
+  manager varchar(255)
+  created_at datetime
+}
+
+Table Inventory {
+  id int [pk, increment]
+  sku_id int
+  warehouse_id int
+  quantity int
+  min_level int
+  updated_at datetime
+}
+
+Table Orders {
+  id int [pk, increment]
+  user_id int
+  order_number varchar(100)
+  status varchar(50)
+  subtotal decimal
+  shipping decimal
+  tax decimal
+  total decimal
+  placed_at datetime
+  updated_at datetime
+}
+
+Table OrderItems {
+  id int [pk, increment]
+  order_id int
+  sku_id int
+  quantity int
+  unit_price decimal
+  total_price decimal
+}
+
+Table Payments {
+  id int [pk, increment]
+  order_id int
+  user_id int
+  amount decimal
+  method varchar(50)
+  transaction_ref varchar(255)
+  status varchar(50)
+  created_at datetime
+}
+
+Table Ingredients {
+  id int [pk, increment]
+  name varchar(255)
+}
+
+Table ProductIngredients {
+  product_id int
+  ingredient_id int
+  pct decimal
+  indexes {
+    (product_id, ingredient_id) [pk]
+  }
+}
+
+Table Certifications {
+  id int [pk, increment]
+  name varchar(255)
+  issuer varchar(255)
+  description text
+}
+
+Table ProductCertifications {
+  product_id int
+  certification_id int
+  certified_at datetime
+  indexes {
+    (product_id, certification_id) [pk]
+  }
+}
+
+Ref: Products.brand_id > Brands.id
+Ref: Products.supplier_id > Suppliers.id
+Ref: Products.category_id > ProductCategories.id
+Ref: ProductSKUs.product_id > Products.id
+Ref: Inventory.sku_id > ProductSKUs.id
+Ref: Inventory.warehouse_id > Warehouses.id
+Ref: Orders.user_id > Users.id
+Ref: OrderItems.order_id > Orders.id
+Ref: OrderItems.sku_id > ProductSKUs.id
+Ref: Payments.order_id > Orders.id
+Ref: Payments.user_id > Users.id
+Ref: ProductIngredients.product_id > Products.id
+Ref: ProductIngredients.ingredient_id > Ingredients.id
+Ref: ProductCertifications.product_id > Products.id
+Ref: ProductCertifications.certification_id > Certifications.id
